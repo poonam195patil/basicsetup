@@ -1,0 +1,50 @@
+# execute commands to both master and worker node
+
+sudo apt-get update -y
+sudo apt-get install docker.io -y   
+sudo apt-get install -y apt-transport-https ca-certificates curl
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update -y
+sudo apt-get install -y kubelet kubeadm kubectl -y
+sudo apt-mark hold kubelet kubeadm kubectl
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update -y
+sudo apt-get install helm -y
+
+#execute commands only on master node
+
+sudo kubeadm init --apiserver-advertise-address=$server-privateIP --pod-network-cidr=192.168.0.0/16(--pod-network-cidr=10.244.0.0/16) --ignore-preflight-errors=IsPrivilegedUser
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+#execute commands only on worker node
+sudo kubeadm join 10.11.1.173:6443 --token 70dvjk.alwa5x1l7k7ilm5l --discovery-token-ca-cert-hash sha256:f75cdc4b655a190c89e5a828a175c47f9db7f52d4191fcb7b5f9890c6f4f6fc7
+
+#add network plugin
+https://github.com/flannel-io/flannel
+
+#create secret
+kubectl create secret docker-registry ecdevops --docker-server=$docker-registry-path --docker-username=$username --docker-password=$pwd
+
+#create namespace 
+kubectl create namespace $namespace-name
+
+#basic cmds
+kubectl get pod --namespace $namespace
+kubectl get svc
+kubectl get deployment
+kubectl logs $podname
+kubectl delete deployment
+kubectl describe pod $podname 
+
+
+#imp URL
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+https://docs.projectcalico.org/getting-started/kubernetes/self-managed-onprem/onpremises
+https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+https://helm.sh/docs/intro/install/
+https://docs.projectcalico.org/getting-started/kubernetes/flannel/flannel   imp
