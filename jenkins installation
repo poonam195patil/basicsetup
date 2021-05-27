@@ -1,0 +1,17 @@
+sudo apt update
+sudo apt install openjdk-8-jdk -y
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+echo $JAVA_HOME
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update -y
+sudo apt-get install jenkins -y
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+sudo systemctl status jenkins
+http://your_server_ip_or_domain:8080
+
+
+# IMP link
+https://www.tecmint.com/install-jenkins-on-ubuntu/
+https://techpostal.blogspot.com/2020/01/jenkins-installation-in-ubuntu-1804.html
